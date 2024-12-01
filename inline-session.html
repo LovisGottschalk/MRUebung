@@ -125,6 +125,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 	document.querySelector('header').appendChild(arButton.domElement);
         document.querySelector('header').appendChild(xrButton.domElement);
 
+	if (navigator.xr) {
+          // Checks to ensure that 'immersive-ar' mode is available, and only
+          // enables the button if so.
+          navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
+            xrButton.enabled = supported;
+          });
+	      
         if (navigator.xr) {
           navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
             xrButton.enabled = supported;
