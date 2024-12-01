@@ -159,6 +159,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         // environment will be visible either via video passthrough or a
         // transparent display. This may be presented either in a headset or
         // fullscreen on a mobile device.
+	console.log('Requesting AR Session');
         return navigator.xr.requestSession('immersive-ar').then((session) => {
               arButton.setSession(session);
               session.isImmersive = true;
