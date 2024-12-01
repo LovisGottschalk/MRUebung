@@ -178,7 +178,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         if (session.isImmersive) {
           // When in 'immersive-ar' mode don't draw an opaque background because
           // we want the real world to show through.
-          //skybox.visible = false;
+          skybox.visible = false;
         }
 
         initGL();
@@ -202,7 +202,29 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           }
           session.requestAnimationFrame(onXRFrame);
         });
-      }	    
+      }
+
+      function initGL() {
+        if (gl)
+          return;
+
+        gl = createWebGLContext({
+          xrCompatible: true
+        });
+        document.body.appendChild(gl.canvas);
+
+        function onResize() {
+          gl.canvas.width = gl.canvas.clientWidth * window.devicePixelRatio;
+          gl.canvas.height = gl.canvas.clientHeight * window.devicePixelRatio;
+        }
+        window.addEventListener('resize', onResize);
+        onResize();
+
+        renderer = new Renderer(gl);
+
+        scene.setRenderer(renderer);
+      }
+
 
       function onSessionStarted(session) {
         session.addEventListener('end', onSessionEnded);
