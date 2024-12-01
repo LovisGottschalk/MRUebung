@@ -129,7 +129,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           // Checks to ensure that 'immersive-ar' mode is available, and only
           // enables the button if so.
           navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
-            xrButton.enabled = supported;
+            arButton.enabled = supported;
           });
 	      
         if (navigator.xr) {
