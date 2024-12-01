@@ -187,6 +187,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         let pose = frame.getViewerPose(refSpace);
 
         scene.startFrame();
+        console.log('onXRFrame called');
 
         session.requestAnimationFrame(onXRFrame);
 
