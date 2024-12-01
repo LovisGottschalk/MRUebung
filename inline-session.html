@@ -160,7 +160,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         // transparent display. This may be presented either in a headset or
         // fullscreen on a mobile device.
         return navigator.xr.requestSession('immersive-ar').then((session) => {
-              xrButton.setSession(session);
+              arButton.setSession(session);
               session.isImmersive = true;
               onArSessionStarted(session);
             });
