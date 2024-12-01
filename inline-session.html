@@ -117,7 +117,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         });
 	arButton = new WebXRButton({
 	  onRequestARSession: onRequestArSession,
-          onEndSession: onEndSession,
+          onEndSession: onEndArSession,
           textEnterXRTitle: "START AR",
           textXRNotFoundTitle: "AR NOT FOUND",
           textExitXRTitle: "EXIT  AR",
@@ -159,13 +159,45 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         // environment will be visible either via video passthrough or a
         // transparent display. This may be presented either in a headset or
         // fullscreen on a mobile device.
-        return navigator.xr.requestSession('immersive-ar')
-            .then((session) => {
+        return navigator.xr.requestSession('immersive-ar').then((session) => {
               xrButton.setSession(session);
               session.isImmersive = true;
-              onSessionStarted(session);
+              onArSessionStarted(session);
             });
       }
+
+
+      function onArSessionStarted(session) {
+        session.addEventListener('end', onSessionEnded);
+
+        if (session.isImmersive) {
+          // When in 'immersive-ar' mode don't draw an opaque background because
+          // we want the real world to show through.
+          skybox.visible = false;
+        }
+
+        initGL();
+
+        session.updateRenderState({ baseLayer: new XRWebGLLayer(session, gl) });
+
+        let refSpaceType = session.isImmersive ? 'local' : 'viewer';
+        session.requestReferenceSpace(refSpaceType).then((refSpace) => {
+          if (session.isImmersive) {
+            xrImmersiveRefSpace = refSpace;
+
+            xrImmersiveRefSpace.addEventListener('reset', (evt) => {
+              if (evt.transform) {
+                // AR experiences typically should stay grounded to the real world.
+                // If there's a known origin shift, compensate for it here.
+                xrImmersiveRefSpace = xrImmersiveRefSpace.getOffsetReferenceSpace(evt.transform);
+              }
+            });
+          } else {
+            inlineViewerHelper = new InlineViewerHelper(gl.canvas, refSpace);
+          }
+          session.requestAnimationFrame(onXRFrame);
+        });
+      }	    
 
       function onSessionStarted(session) {
         session.addEventListener('end', onSessionEnded);
@@ -225,11 +257,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       function onEndSession(session) {
         session.end();
       }
+	    
+     
 
       function onSessionEnded(event) {
         // Only reset the button when the immersive session ends.
         if (event.session.isImmersive) {
           xrButton.setSession(null);
+	  skybox.visible = true;
         }
       }
 
