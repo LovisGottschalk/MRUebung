@@ -163,6 +163,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         // fullscreen on a mobile device.
 	console.log('Requesting AR Session');
 	console.log('Solar System Visibility:', solarSystem.visible);
+	console.log('Solar System Position:', solarSystem.translation);
         return navigator.xr.requestSession('immersive-ar').then((session) => {
               arButton.setSession(session);
               session.isImmersive = true;
